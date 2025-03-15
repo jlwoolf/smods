@@ -3270,11 +3270,21 @@ Set `prefix_config.key = false` on your object instead.]]):format(obj.key), obj.
         end,
         inject = function(_) end
     }
-
+    
     SMODS.Keybind {
         key_pressed = 'm',
         event = 'held',
         held_duration = 1.1,
+        action = function(self)
+            SMODS.save_all_config()
+		    SMODS.restart_game()
+        end
+    }
+
+    SMODS.Keybind {
+        key_pressed = 'm',
+        held_keys = { "lctrl" },
+        event = 'pressed',
         action = function(self)
             SMODS.save_all_config()
 		    SMODS.restart_game()
