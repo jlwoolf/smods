@@ -765,7 +765,7 @@ Set `prefix_config.key = false` on your object instead.]]):format(obj.key), obj.
             G.C.RARITY[self.key] = self.badge_colour
             -- Called every frame, moving deprecated prints here
             if self.gradient and type(self.gradient) == "function" then
-                sendWarnMessage(('Found `gradient` function on SMODS.Rarity object "%s". This field is deprecated; please use `SMODS.Gradient` API instead.'):format(obj.key), 'Rarity')
+                sendWarnMessage(('Found `gradient` function on SMODS.Rarity object "%s". This field is deprecated; please use `SMODS.Gradient` API instead.'):format(self.key), 'Rarity')
             end
         end,
         process_loc_text = function(self)
@@ -1893,7 +1893,7 @@ Set `prefix_config.key = false` on your object instead.]]):format(obj.key), obj.
             ignore = false
         },
         next = {},
-        prev = {},
+        prev = nil,
         straight_edge = false,
         -- TODO we need a better system for what this is doing.
         -- We should allow setting a playing card's atlas and position to any values,
@@ -1924,6 +1924,7 @@ Set `prefix_config.key = false` on your object instead.]]):format(obj.key), obj.
             self.id = self.max_id.value
             self.shorthand = self.shorthand or self.key
             self.sort_nominal = self.nominal + (self.face_nominal or 0)
+            self.prev = self.prev or {}
             if self:check_dependencies() and not self.obj_table[self.key] then
                 self.obj_table[self.key] = self
                 local j
@@ -1942,6 +1943,7 @@ Set `prefix_config.key = false` on your object instead.]]):format(obj.key), obj.
                 for _,v in ipairs(self.next) do
                     local other = self.obj_table[v]
                     if other then
+                        other.prev = other.prev or {}
                         table.insert(other.prev, self.key)
                     end
                 end
@@ -2585,7 +2587,7 @@ Set `prefix_config.key = false` on your object instead.]]):format(obj.key), obj.
     }
     SMODS.PokerHandPart {
         key = '_straight',
-        func = function(hand) return get_straight(hand, next(SMODS.find_card('j_four_fingers')) and 4 or 5, next(SMODS.find_card('j_shortcut'))) end
+        func = function(hand) return get_straight(hand, next(SMODS.find_card('j_four_fingers')) and 4 or 5, not not next(SMODS.find_card('j_shortcut'))) end
     }
     SMODS.PokerHandPart {
         key = '_flush',
